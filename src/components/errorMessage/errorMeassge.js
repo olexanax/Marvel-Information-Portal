@@ -1,7 +1,7 @@
-import error from './error.gif'
+import error from './error2.gif'
 
 const ErrorMessage = () => {
-    return (<img src={error} alt="error gif" />)
+    return (<img style = {{height: '260px'}}src={error} alt="error gif" />)
 }
 
 export default ErrorMessage;

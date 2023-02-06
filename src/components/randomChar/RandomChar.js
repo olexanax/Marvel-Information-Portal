@@ -1,25 +1,34 @@
 import { Component } from 'react/cjs/react.development';
 import MarvelService from '../../services/MarvelService';
-import Spinner from '../Spinner.js/Spinner';
+import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMeassge.js';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 class RandomChar extends Component {
-    constructor(props){
-        super(props);
-        this.updateChar()
-        this.state = {
-            char:{},
-            loading: true,
-            error: false
-        }
+    state = {
+        char:{},
+        loading: true,
+        error: false
     }
 
     marvelService = new MarvelService();
+
+    componentDidMount(){
+        this.updateChar()
+        // this.timerId  = setInterval(this.updateChar(), 15000)
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.timerId)
+    }
     
     onCharLoaded = (char) => {
-        this.setState({char, loading: false})
+        this.setState({char, loading: false, error: false})
+    }
+
+    onCharLoading = (char) => {
+        this.setState({loading: true, error: false})
     }
 
     onError = () => {
@@ -30,6 +39,7 @@ class RandomChar extends Component {
     }
 
     updateChar = () => {
+        this.onCharLoading()
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
         this.marvelService
             .getCharacter(id)
@@ -68,9 +78,11 @@ class RandomChar extends Component {
 
 const View = ({char}) => {
     const {name, wiki, homepage, description, thumbnail} = char;
+    const addStyle = thumbnail.indexOf('image_not_available') === -1 ?  null : {objectFit:'contain'};
+
     return(
         <div className="randomchar__block">
-            <img src={thumbnail} alt="Random character" className="randomchar__img"/>
+            <img style={addStyle} src={thumbnail} alt="Random character" className="randomchar__img"/>
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">
