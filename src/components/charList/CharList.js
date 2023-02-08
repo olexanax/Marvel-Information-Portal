@@ -13,12 +13,33 @@ class CharList extends Component {
         newItemLoading: false,
         offset: 210,
         outOfList: false,
+        //// using localStorage
+        userScrollIndex:0
     }
 
     marvelService = new MarvelService();
 
     componentDidMount(){
         this.updateList()
+
+        //// using localStorage
+
+        // const i = localStorage.getItem('userScrollIndex');
+        // console.log(i)
+        // console.log(typeof(i))
+        // let j = 0
+        // const test = async () => {
+        //     await this.addNewChars()
+        //     j++
+        //     if(j<i){
+        //         test()
+        //     }
+        // }
+        // test()
+
+
+        //update list by scroll
+
         // window.addEventListener('scroll', ()=>{
         //    if (document.body.offsetHeight < window.scrollY + document.documentElement.clientHeight ){
         //         this.addNewChars()
@@ -27,6 +48,8 @@ class CharList extends Component {
     }
 
     componentWillUnmount(){
+        //update list by scroll
+
         // window.removeEventListener('scroll', ()=>{
         //     if (document.body.offsetHeight === window.scrollY + document.documentElement.clientHeight ){
         //          this.addNewChars()
@@ -40,8 +63,8 @@ class CharList extends Component {
             .catch(() => this.setState({error: true, loading: false}))
     }
 
-    addNewChars = async() => {
-        await this.setState({newItemLoading:true, offset: this.state.offset + 9})
+    addNewChars = async() => {                                                                    //// using localStorage
+        await this.setState({newItemLoading:true, offset: this.state.offset + 9, userScrollIndex: this.state.userScrollIndex +1})
         await this.marvelService.getAllCharacters(this.state.offset)
             .then(res => {this.setState({charList: [...this.state.charList, ...res],
                                         newItemLoading:false,
