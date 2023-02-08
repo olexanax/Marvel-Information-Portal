@@ -4,8 +4,7 @@ import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMeassge.js';
 import Skeleton from '../skeleton/Skeleton';
 import './charInfo.scss';
-import thor from '../../resources/img/thor.jpeg';
-import CharList from '../charList/CharList';
+
 
 class CharInfo extends Component {
 
