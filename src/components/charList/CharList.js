@@ -1,4 +1,5 @@
 import { Component } from 'react/cjs/react.development';
+import PropTypes from 'prop-types'; // ES6
 import MarvelService from '../../services/MarvelService';
 import './charList.scss';
 import Spinner from '../spinner/Spinner';
@@ -13,72 +14,70 @@ class CharList extends Component {
         newItemLoading: false,
         offset: 210,
         outOfList: false,
-        //// using localStorage
-        userScrollIndex:0
     }
 
     marvelService = new MarvelService();
 
     componentDidMount(){
-        this.updateList()
-
-        //// using localStorage
-
-        // const i = localStorage.getItem('userScrollIndex');
-        // console.log(i)
-        // console.log(typeof(i))
-        // let j = 0
-        // const test = async () => {
-        //     await this.addNewChars()
-        //     j++
-        //     if(j<i){
-        //         test()
-        //     }
-        // }
-        // test()
-
-
-        //update list by scroll
-
-        // window.addEventListener('scroll', ()=>{
-        //    if (document.body.offsetHeight < window.scrollY + document.documentElement.clientHeight ){
-        //         this.addNewChars()
-        //    }
-        // })
+        this.onRequest()
     }
 
     componentWillUnmount(){
-        //update list by scroll
-
-        // window.removeEventListener('scroll', ()=>{
-        //     if (document.body.offsetHeight === window.scrollY + document.documentElement.clientHeight ){
-        //          this.addNewChars()
-        //     }
-        //  })
     }
 
-    updateList = () => {
-        this.marvelService.getAllCharacters()
-            .then(res => this.setState({charList: res, loading: false}))
-            .catch(() => this.setState({error: true, loading: false}))
+    onRequest = async () => {
+        this.setState({newItemLoading:true})
+        this.marvelService.getAllCharacters(this.state.offset)
+            .then(this.onLoaded)
+            .catch(this.onError)
     }
 
-    addNewChars = async() => {                                                                    //// using localStorage
-        await this.setState({newItemLoading:true, offset: this.state.offset + 9, userScrollIndex: this.state.userScrollIndex +1})
-        await this.marvelService.getAllCharacters(this.state.offset)
-            .then(res => {this.setState({charList: [...this.state.charList, ...res],
-                                        newItemLoading:false,
-                                        outOfList:res.length<9?true:false})})
-            .then(()=> localStorage.setItem('userScrollIndex', this.state.userScrollIndex))
-            .catch(() => this.setState({error: true, loading: false, newItemLoading:false}))
+    onLoaded = (res) => {
+        this.setState({charList: [...this.state.charList, ...res],
+            newItemLoading:false,
+            loading:false,
+            outOfList:res.length<9?true:false,
+            offset: this.state.offset + 9})
     }
+
+    onError = () => {
+        this.setState({
+            loading: false,
+            error: true,
+            newItemLoading:false
+        })
+    }
+
+    refsArr = []
+
+    setRefsOnArr = elem => {
+        this.refsArr.push(elem)
+    }
+
+    focusOnItem = (id) => {
+        this.refsArr.forEach(ref => ref.classList.remove('char__item_selected'))
+        this.refsArr[id].classList.add('char__item_selected')
+        this.refsArr[id].focus()
+    }
+
 
     renderItems = (arr) => {
-        const items = arr.map((item)=> {
+        const items = arr.map((item, i)=> {
             const addStyle = item.thumbnail.indexOf('image_not_available') === -1 ?  null : {objectFit:'contain'};
-            return <li onClick = {() => this.props.onUpdateActiveChar(item.id)} 
+            return <li  onClick={() => {
+                            this.props.onUpdateActiveChar(item.id);
+                            this.focusOnItem(i)
+                        }}
+                        onKeyDown={(e) => {
+                            if(e.key == ' ' || e.key == 'Enter'){
+                                this.focusOnItem(i)
+                                this.props.onUpdateActiveChar(item.id)
+                            }
+                        }}
+                        tabIndex = '0'
                         className="char__item" 
-                        key={item.id}>
+                        key={item.id}
+                        ref={this.setRefsOnArr}>
                     <img src={item.thumbnail} style = {addStyle} alt="abyss"/>
                     <div className="char__name">{item.name}</div>
                 </li>
@@ -103,7 +102,7 @@ class CharList extends Component {
                 {errorMessage}
                 {spinner}
                 {content}
-                <button onClick = {this.addNewChars}
+                <button onClick = {this.onRequest}
                         className="button button__main button__long"
                         disabled = {this.state.newItemLoading}
                         style={{display: outOfList?'none':'block'}}>
@@ -113,6 +112,10 @@ class CharList extends Component {
             </div>
         )
    }
+}
+
+CharList.propTypes ={
+    onUpdateActiveChar: PropTypes.func.isRequired
 }
 
 export default CharList;
