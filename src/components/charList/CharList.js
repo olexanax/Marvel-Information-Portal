@@ -69,7 +69,7 @@ class CharList extends Component {
                             this.focusOnItem(i)
                         }}
                         onKeyDown={(e) => {
-                            if(e.key == ' ' || e.key == 'Enter'){
+                            if(e.key === ' ' || e.key === 'Enter'){
                                 this.focusOnItem(i)
                                 this.props.onUpdateActiveChar(item.id)
                             }
