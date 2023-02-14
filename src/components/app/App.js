@@ -1,4 +1,4 @@
-import { Component } from 'react/cjs/react.development';
+import { Component, useState } from 'react';
 import AppHeader from "../appHeader/AppHeader";
 import RandomChar from "../randomChar/RandomChar";
 import CharList from "../charList/CharList";
@@ -7,16 +7,21 @@ import ErrorBoundary from '../errorBoundary/ErrorBoundary';
 
 import decoration from '../../resources/img/vision.png';
 
-class App extends Component {
-    state = {
-        activeChar: null
+function App () {
+
+    const [activeChar, setActiveChar] = useState(null)
+
+    function onUpdateActiveChar (id) {
+        setActiveChar(id)
     }
 
-    onUpdateActiveChar = (id) => {
-        this.setState({activeChar:id})
-    }
+    // state = {
+    //     activeChar: null
+    // }
 
-    render(){
+    // onUpdateActiveChar = (id) => {
+    //     this.setState({activeChar:id})
+    // }
         return (
             <div className="app">
                 <AppHeader/>
@@ -26,17 +31,16 @@ class App extends Component {
                     </ErrorBoundary>
                     <div className="char__content">
                         <ErrorBoundary>
-                           <CharList onUpdateActiveChar = {this.onUpdateActiveChar} />
+                           <CharList onUpdateActiveChar = {onUpdateActiveChar} />
                         </ErrorBoundary>
                         <ErrorBoundary>
-                            <CharInfo charId = {this.state.activeChar}/>
+                            <CharInfo charId = {activeChar}/>
                         </ErrorBoundary>
                     </div>
                     <img className="bg-decoration" src={decoration} alt="vision"/>
                 </main>
             </div>
         )
-    }
 }
 
 export default App;
