@@ -1,7 +1,7 @@
 import {useState, useEffect, useRef} from 'react/cjs/react.development';
+import useMarvelService from '../../services/MarvelService';
 import PropTypes from 'prop-types';
 
-import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMeassge.js';
 import './charList.scss';
@@ -11,7 +11,7 @@ const CharList = (props) => {
 
     const [ charList, setCharList] = useState([]),
         [newItemLoading, setNewItemLoading] = useState(false),
-        [offset, setOffset] = useState(210),
+        [offset, setOffset] = useState(220),
         [outOfList, setOutOfList] = useState(false)
 
     const {loading, error, getAllCharacters}= useMarvelService();
