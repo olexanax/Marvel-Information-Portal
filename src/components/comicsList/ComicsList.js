@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef} from 'react';
+import { Link, unstable_usePrompt } from 'react-router-dom';
 import useMarvelService from '../../services/MarvelService';
 
 import ErrorMessage from '../errorMessage/errorMeassge';
@@ -10,18 +11,26 @@ const ComicsList = () => {
 
     const [comicsList, setComicsList] = useState([]),
     [newItemLoading, setNewItemLoading] = useState(false),
-    [offset, setOffset] = useState(100),
-    [outOfList, setOutOfList] = useState(false)
-    
+    [offset, setOffset] = useState(17),
+    [outOfList, setOutOfList] = useState(false),
+    totalItemsRef = useRef(8);
+
     const {getAllComics, loading, error} = useMarvelService();
 
     useEffect(()=> {
-        onRequest(offset, true)
+        if(+localStorage.getItem('totalItemsRef') !== 0){totalItemsRef.current = +localStorage.getItem('totalItemsRef')}
+        localStorage.clear()
+        onRequest(offset, totalItemsRef.current,true)
+
+        return () => {
+            localStorage.setItem('totalItemsRef', totalItemsRef.current)
+        }
     },[])
 
-    const onRequest = (offset, initial) => {
-        initial ? setNewItemLoading(false) : setNewItemLoading(true);
-        getAllComics(offset)
+    const onRequest = (offset, limit, initial) => {
+        initial ? setNewItemLoading(false)  : setNewItemLoading(true);
+        if(!initial){totalItemsRef.current = totalItemsRef.current + 8}
+        getAllComics(offset, limit)
             .then(onLoaded)
 
     }
@@ -41,13 +50,13 @@ const ComicsList = () => {
         refsArr.current[id].focus()
     }
 
-    const renderComics = arr => {
+    const renderItems = arr => {
 
         const comics = arr.map((comics, i) => {
             const addStyle = comics.thumbnail.indexOf('image_not_available') === -1 ?  null : {objectFit:'contain'};
             return(
                 <li className="comics__item" 
-                    key={comics.id}
+                    key={i}
                     onClick={() => {
                          focusOnItem(i)
                      }}
@@ -58,11 +67,11 @@ const ComicsList = () => {
                     }}
                     tabIndex = '0'
                     ref={elem => refsArr.current[i] = elem}>
-                    <a href="#">
+                    <Link to={`/comics/${comics.id}`}>
                         <img src={comics.thumbnail} style={addStyle}alt={comics.name} className="comics__item-img"/>
                         <div className="comics__item-name">{comics.name}</div>
                         <div className="comics__item-price">{comics.price}$</div>
-                    </a>
+                    </Link>
                 </li>
             )
         })
@@ -74,7 +83,7 @@ const ComicsList = () => {
         )
     }
 
-    const items = renderComics(comicsList);
+    const items = renderItems(comicsList);
     const spinner = loading || !comicsList ? <Spinner/> : null;
     const errorMeassge = error ? <ErrorMessage/> : null;
     const endOfListMessage = outOfList ? <p className='char__endMessage'>That's all comics</p> : null;
@@ -85,7 +94,7 @@ const ComicsList = () => {
             {errorMeassge}
             {items}
             <button className="button button__main button__long"
-                    onClick = {() =>onRequest(offset)}
+                    onClick = {() =>onRequest(offset, 8)}
                     disabled={newItemLoading}>
                 <div className="inner">load more</div>
             </button>

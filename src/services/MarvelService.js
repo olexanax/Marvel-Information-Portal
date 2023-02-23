@@ -28,28 +28,40 @@ const useMarvelService = () => {
             wiki: char.urls[0].url,
             homepage: char.urls[1].url,
             id: char.id,
-            comicsList: char.comics.items.slice(0,10).map(item => item.name),
+            comicsList: char.comics.items.slice(0,10).map(item => ({name: item.name, id: findIComicsId(item.resourceURI)})),
         }
     }
 
-    const getAllComics = async (offset = _baseComicsOffset) => {
-        const res = await request(`${_apiBase}/comics?limit=8&offset=${offset}&api${_apiKey}`)
-        
+    const getAllComics = async (offset = _baseComicsOffset, limit = 8) => {
+        const res = await request(`${_apiBase}/comics?limit=${limit}&offset=${offset}&api${_apiKey}`)
         return res.data.results.map(_tranformComics)
     }
+
+    const getComics  = async (id) => {
+        const res = await request(`${_apiBase}/comics/${id}?limit=9&offset=210&api${_apiKey}`);
+        return _tranformComics(res.data.results[0])
+    }
+
     const _tranformComics = (comics) => {
         return {
             name: comics.title,
-            price: comics.prices.price || '---',
+            price: comics.prices[0].price|| '---',
             thumbnail: comics.thumbnail.path + '.' + comics.thumbnail.extension,
             description: comics.description || 'No description',
             pages: comics.pageCount,
             id: comics.id,
-            language: comics.textObjects[0]?.language || 'No information'
+            language: comics.textObjects[0]?.language || 'No information about lang'
         }
     }
 
-    return{loading, error, getCharacter, getAllCharacters, clearError, getAllComics}
+    const findIComicsId = (str) => {
+        const regex = /comics\/(.*)/;
+        const match = regex.exec(str);
+        return match && match[1];
+      }
+      
+
+    return{loading, error, getCharacter, getAllCharacters, clearError, getAllComics, getComics}
 }
 export default useMarvelService;
 

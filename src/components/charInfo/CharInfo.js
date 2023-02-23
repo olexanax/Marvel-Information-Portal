@@ -1,8 +1,9 @@
 import {useState, useEffect } from 'react/cjs/react.development';
-import PropTypes from 'prop-types'; // ES6
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/errorMeassge.js';
+import ErrorMessage from '../errorMessage/errorMeassge';
 import Skeleton from '../skeleton/Skeleton';
 import './charInfo.scss';
 
@@ -77,11 +78,13 @@ const View = ({char}) => {
             {comicsList.map((item, i) => {
                 return(
                     <li className="char__comics-item" key={i}>
-                        {item}
+                        <Link to={`comics/${item.id}`}>
+                            {item.name}
+                        </Link>
                     </li>
                 )
             })}
-        </ul>
+        </ul> 
        </>
     )
 }

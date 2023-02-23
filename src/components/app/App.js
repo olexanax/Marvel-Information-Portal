@@ -1,40 +1,19 @@
-import {useState } from 'react';
-import AppHeader from "../appHeader/AppHeader";
-import RandomChar from "../randomChar/RandomChar";
-import CharList from "../charList/CharList";
-import CharInfo from "../charInfo/CharInfo";
-import ComicsList from '../comicsList/ComicsList';
-import ErrorBoundary from '../errorBoundary/ErrorBoundary';
-
-import decoration from '../../resources/img/vision.png';
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import {MainPage, ComicsPage, SinglePage, Page404, Layout} from '../pages';
 
 const App = () => {
 
-    const [activeChar, setActiveChar] = useState(null)
-
-    const onUpdateActiveChar = (id) => {
-        setActiveChar(id)
-    }
-
     return (
-        <div className="app">
-            <AppHeader/>
-            <main>
-                {/* <ErrorBoundary>
-                    <RandomChar/>
-                </ErrorBoundary>
-                <div className="char__content">
-                    <ErrorBoundary>
-                        <CharList onUpdateActiveChar = {onUpdateActiveChar} />
-                    </ErrorBoundary>
-                    <ErrorBoundary>
-                        <CharInfo charId = {activeChar}/>
-                    </ErrorBoundary>
-                </div>
-                <img className="bg-decoration" src={decoration} alt="vision"/> */}
-                <ComicsList/>
-            </main>
-        </div>
+        <Router>
+                <Routes>
+                    <Route path ='/' element={<Layout/>}>
+                        <Route index element={<MainPage/>}/>
+                        <Route path='comics' element={<ComicsPage/>}/>
+                        <Route path='comics/:comicId' element={<SinglePage/>}/>
+                        <Route path='*' element={<Page404/>}/>
+                    </Route>
+                </Routes>
+        </Router>
     )
 }
 
