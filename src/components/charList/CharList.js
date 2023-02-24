@@ -1,5 +1,7 @@
 import {useState, useEffect, useRef} from 'react/cjs/react.development';
 import useMarvelService from '../../services/MarvelService';
+import useItemList from '../../hooks/itemList.hook';
+
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMeassge.js';
@@ -14,15 +16,18 @@ const CharList = (props) => {
         [outOfList, setOutOfList] = useState(false)
 
     const {loading, error, getAllCharacters}= useMarvelService();
+    const {refsArr, focusOnItem} = useItemList()
 
+    useEffect(()=> {
+        const limit = getItemsCount() || 9
+        onRequest(offset, limit ,true)
+        return () => {
+        }
+    },[])
 
-    useEffect(() => {
-        onRequest(offset, true);
-    }, [])
-
-    const onRequest = (offset, initial) => {
-        initial ? setNewItemLoading(false) : setNewItemLoading(true);
-        getAllCharacters(offset)
+    const onRequest = (offset, limit, initial) => {
+        initial ? setNewItemLoading(false)  : setNewItemLoading(true);
+        getAllCharacters(offset, limit)
             .then(onLoaded)
 
     }
@@ -30,18 +35,18 @@ const CharList = (props) => {
     const onLoaded = (res) => {
         setCharList(prev => [...prev, ...res])
         setNewItemLoading(false)
-        setOutOfList(res.length<9?true:false)
-        setOffset(prev => prev + 9)
+        setOutOfList(res.length<8?true:false)
+        setOffset(prev => prev + 8)
+        setItemsCount(res)
     }
 
-
-    const refsArr = useRef([])
-
-    const focusOnItem = (id) => {
-        refsArr.current.forEach(ref => ref.classList.remove('char__item_selected'))
-        refsArr.current[id].classList.add('char__item_selected')
-        refsArr.current[id].focus()
+    const setItemsCount = (res) => {
+        localStorage.setItem('totalChars', charList.length + res.length)
     }
+    const getItemsCount = () => {
+        return localStorage.getItem('totalChars') !== 0 ? +localStorage.getItem('totalChars') : 9
+    }
+
 
     const renderItems = (arr) => {
         const items = arr.map((item, i)=> {
@@ -58,7 +63,7 @@ const CharList = (props) => {
                         }}
                         tabIndex = '0'
                         className="char__item" 
-                        key={item.id}
+                        key={i}
                         ref={elem => refsArr.current[i] = elem}>
                     <img src={item.thumbnail} style = {addStyle} alt="abyss"/>
                     <div className="char__name">{item.name}</div>

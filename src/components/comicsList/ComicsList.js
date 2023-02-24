@@ -1,6 +1,7 @@
-import { useEffect, useState, useRef} from 'react';
-import { Link, unstable_usePrompt } from 'react-router-dom';
+import { useEffect, useState} from 'react';
+import { Link} from 'react-router-dom';
 import useMarvelService from '../../services/MarvelService';
+import useItemList from '../../hooks/itemList.hook';
 
 import ErrorMessage from '../errorMessage/errorMeassge';
 import Spinner from '../spinner/Spinner';
@@ -10,26 +11,22 @@ import './comicsList.scss';
 const ComicsList = () => {
 
     const [comicsList, setComicsList] = useState([]),
-    [newItemLoading, setNewItemLoading] = useState(false),
-    [offset, setOffset] = useState(17),
-    [outOfList, setOutOfList] = useState(false),
-    totalItemsRef = useRef(8);
+        [newItemLoading, setNewItemLoading] = useState(false),
+        [offset, setOffset] = useState(17),
+        [outOfList, setOutOfList] = useState(false);
 
     const {getAllComics, loading, error} = useMarvelService();
+    const {refsArr, focusOnItem} = useItemList()
 
     useEffect(()=> {
-        if(+localStorage.getItem('totalItemsRef') !== 0){totalItemsRef.current = +localStorage.getItem('totalItemsRef')}
-        localStorage.clear()
-        onRequest(offset, totalItemsRef.current,true)
-
+        const limit = getItemsCount() || 8
+        onRequest(offset, limit ,true)
         return () => {
-            localStorage.setItem('totalItemsRef', totalItemsRef.current)
         }
     },[])
 
     const onRequest = (offset, limit, initial) => {
         initial ? setNewItemLoading(false)  : setNewItemLoading(true);
-        if(!initial){totalItemsRef.current = totalItemsRef.current + 8}
         getAllComics(offset, limit)
             .then(onLoaded)
 
@@ -40,15 +37,16 @@ const ComicsList = () => {
         setNewItemLoading(false)
         setOutOfList(res.length<8?true:false)
         setOffset(prev => prev + 8)
+        setItemsCount(res)
     }
 
-    const refsArr = useRef([])
-
-    const focusOnItem = (id) => {
-        refsArr.current.forEach(ref => ref.classList.remove('char__item_selected'))
-        refsArr.current[id].classList.add('char__item_selected')
-        refsArr.current[id].focus()
+    const setItemsCount = (res) => {
+        localStorage.setItem('totalComics', comicsList.length + res.length)
     }
+    const getItemsCount = () => {
+        return localStorage.getItem('totalComics') !== 0 ? +localStorage.getItem('totalComics') : 8
+    }
+
 
     const renderItems = arr => {
 
