@@ -45,7 +45,7 @@ const useMarvelService = () => {
     const _tranformComics = (comics) => {
         return {
             name: comics.title,
-            price: comics.prices[0].price|| '---',
+            price: comics.prices[0].price ? comics.prices[0].price + '$' :  'NOT AVALIBLE',
             thumbnail: comics.thumbnail.path + '.' + comics.thumbnail.extension,
             description: comics.description || 'No description',
             pages: comics.pageCount,
