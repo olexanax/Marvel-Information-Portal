@@ -10,7 +10,6 @@ const SinglePage = lazy(()=>import('../pages/SinglePage'));
 
 
 const App = () => {
-    //1 011 345
 
     return (
         <Router>

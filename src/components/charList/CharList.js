@@ -3,6 +3,7 @@ import useMarvelService from '../../services/MarvelService';
 import useItemList from '../../hooks/itemList.hook';
 
 import PropTypes from 'prop-types';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMeassge.js';
 import './charList.scss';
@@ -51,7 +52,8 @@ const CharList = (props) => {
     const renderItems = (arr) => {
         const items = arr.map((item, i)=> {
             const addStyle = item.thumbnail.indexOf('image_not_available') === -1 ?  null : {objectFit:'contain'};
-            return <li onClick={() => {
+            return <CSSTransition timeout={500} classNames='char__item'>
+                <li onClick={() => {
                            props.onUpdateActiveChar(item.id);
                             focusOnItem(i)
                         }}
@@ -68,11 +70,14 @@ const CharList = (props) => {
                     <img src={item.thumbnail} style = {addStyle} alt="abyss"/>
                     <div className="char__name">{item.name}</div>
                 </li>
+            </CSSTransition>
         })
 
         return (
             <ul className="char__grid">
-                {items}
+                <TransitionGroup component={null}>
+                    {items}
+                </TransitionGroup>
             </ul>
         )
     }

@@ -1,5 +1,6 @@
 import { useEffect, useState} from 'react';
 import { Link} from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import useMarvelService from '../../services/MarvelService';
 import useItemList from '../../hooks/itemList.hook';
 
@@ -53,30 +54,34 @@ const ComicsList = () => {
         const comics = arr.map((comics, i) => {
             const addStyle = comics.thumbnail.indexOf('image_not_available') === -1 ?  null : {objectFit:'contain'};
             return(
-                <li className="comics__item" 
-                    key={i}
-                    onClick={() => {
-                         focusOnItem(i)
-                     }}
-                     onKeyDown={(e) => {
-                        if(e.key === ' ' || e.key === 'Enter'){
+               <CSSTransition timeout={500} classNames='comics__item'>
+                    <li className="comics__item" 
+                        key={i}
+                        onClick={() => {
                             focusOnItem(i)
-                        }
-                    }}
-                    tabIndex = '0'
-                    ref={elem => refsArr.current[i] = elem}>
-                    <Link to={`/comics/${comics.id}`}>
-                        <img src={comics.thumbnail} style={addStyle}alt={comics.name} className="comics__item-img"/>
-                        <div className="comics__item-name">{comics.name}</div>
-                        <div className="comics__item-price">{comics.price}$</div>
-                    </Link>
-                </li>
+                        }}
+                        onKeyDown={(e) => {
+                            if(e.key === ' ' || e.key === 'Enter'){
+                                focusOnItem(i)
+                            }
+                        }}
+                        tabIndex = '0'
+                        ref={elem => refsArr.current[i] = elem}>
+                        <Link to={`/comics/${comics.id}`}>
+                            <img src={comics.thumbnail} style={addStyle}alt={comics.name} className="comics__item-img"/>
+                            <div className="comics__item-name">{comics.name}</div>
+                            <div className="comics__item-price">{comics.price}$</div>
+                        </Link>
+                    </li>
+               </CSSTransition>
             )
         })
 
         return(
             <ul className="comics__grid">
-               {comics}
+                <TransitionGroup component={null}>
+                    {comics}
+                </TransitionGroup>
             </ul>
         )
     }
