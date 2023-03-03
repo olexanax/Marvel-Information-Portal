@@ -52,7 +52,7 @@ const CharList = (props) => {
     const renderItems = (arr) => {
         const items = arr.map((item, i)=> {
             const addStyle = item.thumbnail.indexOf('image_not_available') === -1 ?  null : {objectFit:'contain'};
-            return <CSSTransition timeout={500} classNames='char__item'>
+            return <CSSTransition timeout={500} classNames='char__item' key={i}>
                 <li onClick={() => {
                            props.onUpdateActiveChar(item.id);
                             focusOnItem(i)

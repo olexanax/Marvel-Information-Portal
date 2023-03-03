@@ -1,0 +1,75 @@
+@import '../../style/variables.scss';
+
+.char{
+    &__search{
+        padding: 25px;
+    }
+    &__comicss{
+        font-family: 'Roboto Condensed';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 21px;
+        margin-bottom: 15px;
+    }
+    &__search__container{
+
+    }
+    &__info__raw{
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    &__search__input{
+        background: #FFFFFF;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        width: 250px;
+        height: 38px;
+        border: none;
+        padding: 0 10px;
+        &:focus{
+            outline: none;
+        }
+    }
+    &__button{
+        width: 101px;
+        height: 38px;
+        font-family: 'Roboto Condensed';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 16px;
+        text-align: center;
+        font-weight: 400;
+        font-size: 17px;
+        border: none;
+
+        color: #FFFFFF;
+    }
+    &__info__raw{
+
+    }
+    &__request__text{
+        font-family: 'Roboto Condensed';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 21px;
+    }
+}
+.main__button{
+    background: #9F0013;
+}
+.secondary__button{
+    background: #5C5C5C;
+    padding-top: 10px;
+    &:hover{
+        color:#fff;
+    }
+}
+.success{
+    color: #03710E;
+}
+.error{
+    color: #9F0013;
+}

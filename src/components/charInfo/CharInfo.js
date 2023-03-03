@@ -5,6 +5,7 @@ import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMeassge';
 import Skeleton from '../skeleton/Skeleton';
+import SearchChar from '../searchChar/SearchChar';
 import './charInfo.scss';
 
 
@@ -36,21 +37,26 @@ const CharInfo = (props) => {
     const skeleton = !(loading || error || char) ? <Skeleton/> : null
     const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error || !char) ? <View char={char}/> : null;
+    const content = !(loading || error || !char) ? <CharView char={char}/> : null;
     
     return(
-        <div className="char__info">
-            {skeleton}
-            {errorMessage}
-            {spinner}
-            {content}
+        <div className='char__wrapper'>
+            {/* <div className="char__info">
+                {skeleton}
+                {errorMessage}
+                {spinner}
+                {content}
+            </div> */}
+            <div className="char__information">
+                <SearchChar/>
+            </div>
         </div>
 
     )
 }
 
 
-const View = ({char}) => {
+const CharView = ({char}) => {
     const {name, description, thumbnail, homepage, wiki, comicsList} = char
     const addStyle = thumbnail.indexOf('image_not_available') === -1 ?  null : {objectFit:'contain'};
     return(
@@ -78,13 +84,13 @@ const View = ({char}) => {
             {comicsList.map((item, i) => {
                 return(
                     <li className="char__comics-item" key={i}>
-                        <Link to={`comics/${item.id}`}>
+                        <Link to={`item/comics/${item.id}`}>
                             {item.name}
                         </Link>
                     </li>
                 )
             })}
-        </ul> 
+        </ul>
        </>
     )
 }

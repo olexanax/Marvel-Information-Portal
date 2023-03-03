@@ -1,13 +1,17 @@
 @import '../../style/variables.scss';
 
 .char {
-    &__info {
-        padding: 25px;
-        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.25);
+    &__wrapper{
         position: sticky;
         top: 25px;
+    }
+    &__information {
+        &:nth-child(1){padding: 25px;}
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.25);
         z-index: 5;
         background-color: #fff;
+        margin-bottom: 30px;
+
         &-name {
             font-weight: bold;
             font-size: 22px;
@@ -26,6 +30,38 @@
             width: 150px;
             height: 150px;
             object-fit: cover;
+        }
+    }
+    &__search{
+        display: block;
+        padding-bottom: 25px;
+        margin-top: 30px;
+        .char__comics{
+        }
+
+        .search__input{
+            width: 250px;
+            height: 38px;
+            border: none;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            padding: 10px;
+            &:focus{
+                outline: none;
+            }
+        }
+        .search__request__result{
+            width: 250px;
+            display: inline-block;
+        }
+        .button{
+            margin-left: 10px;
+            margin-top: 15px;
+            .inner{
+
+            }
+        }
+        .button__main{
+            background-color: #9F0013;
         }
     }
     &__btns {

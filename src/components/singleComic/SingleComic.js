@@ -7,28 +7,41 @@ import ErrorMessage from '../errorMessage/errorMeassge';
 import './singleComic.scss';
 
 
-const SingleComic = (props) => {
-    const [comics, setComics] = useState()
-    const {loading, error, getComics} = useMarvelService()
-    const {comicId} = useParams();
+const SingleItem = (props) => {
+    const [itemData, setItemData] = useState()
+    const {loading, error, getComics, getCharacter} = useMarvelService()
+    const {item} = useParams();
+    const {itemId} = useParams();
 
 
     useEffect(()=> {
-        getComics(comicId)
-            .then(res => setComics(res))
-    },[comicId])
+        if(item === 'comics'){
+            getComics(itemId)
+                .then(res => setItemData(res))
+        }
+        if(item === 'characters'){
+            getCharacter(itemId)
+                .then(res => setItemData(res))
+        }
 
-    const spinner = (!comics && !error) || loading ? <Spinner/> : null;
+    },[itemId, item])
+
+    const spinner = (!itemData && !error) || loading ? <Spinner/> : null;
     const errorMessage = error ? <ErrorMessage/> : null;
-    const content = comics ?  
+    const content = itemData ?  
         <div className="single-comic">
-            <img src={comics.thumbnail} alt="x-men" className="single-comic__img"/>
+            <img src={itemData.thumbnail} alt="x-men" className="single-comic__img"/>
             <div className="single-comic__info">
-                <h2 className="single-comic__name">X{comics.name}</h2>
-                <p className="single-comic__descr">{comics.description}</p>
-                <p className="single-comic__descr">Pages: {comics.pages}</p>
-                <p className="single-comic__descr">{comics.language}</p>
-                <div className="single-comic__price">{comics.price}</div>
+                <h2 className="single-comic__name">X{itemData.name}</h2>
+                <p className="single-comic__descr">{itemData.description}</p>
+                {
+                item === 'comics' && 
+                <>
+                <p className="single-comic__descr">Pages: {itemData.pages}</p>
+                <p className="single-comic__descr">{itemData.language}</p>
+                <div className="single-comic__price">{itemData.price}</div>
+                </>
+                }
             </div>
             <Link to ='/comics' className="single-comic__back">Back to all</Link>
         </div> : null;
@@ -42,4 +55,4 @@ const SingleComic = (props) => {
     )
 }
 
-export default SingleComic;
+export default SingleItem;

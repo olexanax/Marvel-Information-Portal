@@ -54,7 +54,7 @@ const ComicsList = () => {
         const comics = arr.map((comics, i) => {
             const addStyle = comics.thumbnail.indexOf('image_not_available') === -1 ?  null : {objectFit:'contain'};
             return(
-               <CSSTransition timeout={500} classNames='comics__item'>
+               <CSSTransition timeout={500} classNames='comics__item' key={i}>
                     <li className="comics__item" 
                         key={i}
                         onClick={() => {
@@ -67,7 +67,7 @@ const ComicsList = () => {
                         }}
                         tabIndex = '0'
                         ref={elem => refsArr.current[i] = elem}>
-                        <Link to={`/comics/${comics.id}`}>
+                        <Link to={`/item/comics/${comics.id}`}>
                             <img src={comics.thumbnail} style={addStyle}alt={comics.name} className="comics__item-img"/>
                             <div className="comics__item-name">{comics.name}</div>
                             <div className="comics__item-price">{comics.price}$</div>
