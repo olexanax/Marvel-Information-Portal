@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMeassge';
-import './singleComic.scss';
+import './singleItem.scss';
 
 
 const SingleItem = (props) => {

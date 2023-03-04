@@ -3,6 +3,12 @@
 .char{
     &__search{
         padding: 25px;
+        &__input{
+            font-style: normal;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 16px;
+        }
     }
     &__comicss{
         font-family: 'Roboto Condensed';

@@ -1,12 +1,12 @@
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
-import SingleComic from "../singleComic/SingleComic";
+import SingleItem from "../singleItem/singleItem";
 import AppBanner from "../appBanner/AppBanner";
 
 const SinglePage = () => {
     return (
         <ErrorBoundary>
             <AppBanner/>
-            <SingleComic/>
+            <SingleItem/>
         </ErrorBoundary>
     )
 }
