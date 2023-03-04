@@ -28,7 +28,7 @@ const useHttp = () => {
 
     const clearError = useCallback(() => setError(null),[])
 
-    return{loading, error, clearError, request} 
+    return{loading, setLoading, error, clearError, request} 
 };
 
 

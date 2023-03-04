@@ -8,8 +8,9 @@ import { object, string } from 'yup';
 import './SearchChar.scss';
 
 
-const Errors = ({char, prevSearch, error}) => {
-    const {values} = useFormikContext();
+const Errors = ({char, prevSearch, error, setChar}) => {
+    const {values, errors} = useFormikContext();
+    if(errors.name && char.name){setChar({name:undefined, id:undefined})}
     return(<>
         {error && <p className ='char__request__text error'>Sometging is wrong, please again try later</p>}
 
@@ -45,7 +46,8 @@ const SearchChar = () => {
                 initialValues={{ name: '' }}
                 validationSchema = {object({
                     name: string()
-                            .required('This field is required')})}
+                            .required('This field is required')
+                            .matches(/^[A-Za-z]+$/, 'Language must only contain english letters')})}
                 onSubmit={(values) => updateData(values)
                 }
                 validateOnChange={false}
@@ -61,7 +63,7 @@ const SearchChar = () => {
                     </div>
                     <div className="char__info__raw">
                         <ErrorMessageFormik className ='char__request__text error' name='name' component='p'/>
-                        <Errors char={char} prevSearch={prevSearch} error={error}/>
+                        <Errors char={char} setChar={setChar} prevSearch={prevSearch} error={error}/>
                     </div>
                 </Form>
             </Formik>
