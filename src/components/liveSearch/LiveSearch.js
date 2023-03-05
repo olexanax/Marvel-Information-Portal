@@ -24,10 +24,17 @@ const LiveSearch = () => {
           clearError()
     },[debounce]);
 
+    useEffect(()=>clearInterval(removeFocus, 65),[])
+
     const onChange = e => {
         setLoading(true)
         setSearch(e.target.value)
     }
+
+    const removeFocus = () =>{
+        setFocus(false)
+    }
+
 
     const renderItems = data => {
         const list =  data.map((char, i) => <li key ={i}>
@@ -42,10 +49,10 @@ const LiveSearch = () => {
             </ul> 
         )
     }
-
+    
     const serverErrorMessage = error ? <p className='error'>something went wrong try again later</p> : null;
     const notFindErrorMessage = search && !data.length && !loading && focus ?  <p className='error'>Can't find anything by your search</p> : null;
-    const content = !( error) ? renderItems(data) : null;
+    const content = !error && focus ? renderItems(data) : null;
     const loadingMessage = loading ? <p>loading...</p> : null;
     
     return (
@@ -55,8 +62,8 @@ const LiveSearch = () => {
                     type="text" 
                     value={search} 
                     placeholder='Find a character by name:'
-                    onFocus={()=>setFocus(true)} 
-                    onBlur={()=>setFocus(false)} 
+                    onFocus={()=> setFocus(true)} 
+                    onBlur={()=>setTimeout(() => removeFocus(), 65)} 
                     onChange={e => onChange(e)}/>
             </form>
             {loadingMessage}

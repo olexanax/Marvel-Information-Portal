@@ -13,6 +13,10 @@
             background: #FFFFFF;
             box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25),  -4px -4px 4px rgba(0, 0, 0, 0.25);;
             border: none;
+            &:focus{
+                outline: 3px solid #9F0013;
+                border-radius: 4px;
+            }
          }
     }
     .livesearch__chars__container{

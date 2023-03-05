@@ -4,10 +4,12 @@ import AppBanner from "../appBanner/AppBanner";
 
 const SinglePage = () => {
     return (
+        <>
+        <AppBanner/>
         <ErrorBoundary>
-            <AppBanner/>
             <SingleItem/>
         </ErrorBoundary>
+        </>
     )
 }
 export default SinglePage

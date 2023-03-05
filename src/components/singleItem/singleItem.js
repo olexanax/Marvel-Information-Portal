@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams} from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { Helmet } from "react-helmet";
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMeassge';
@@ -48,6 +49,13 @@ const SingleItem = (props) => {
 
     return (
         <>
+            <Helmet>
+                <meta
+                    name="description"
+                    content={itemData && itemData.name ? itemData.name : 'Goods description'}
+                    />
+                <title>{itemData?.name}</title>
+            </Helmet>
             {spinner}
             {errorMessage}
             {content}
