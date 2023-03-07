@@ -1,13 +1,28 @@
-import {useState, useEffect, useRef} from 'react/cjs/react.development';
+import {useState, useEffect, useMemo} from 'react/cjs/react.development';
 import useMarvelService from '../../services/MarvelService';
 import useItemList from '../../hooks/itemList.hook';
 
 import PropTypes from 'prop-types';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMeassge.js';
 import './charList.scss';
 
+const setContent = (process, Component, newItemLoading) => {
+    switch (process) {
+        case 'waiting':
+            return <Spinner/>
+        case 'loading':
+            return newItemLoading ? <Component/> : <Spinner/>;
+        case 'confirmed':
+            return <Component/>
+        case 'error':
+            return <ErrorMessage/>;
+        default:
+            throw new Error('Unexpected process state')
+    }
+}
 
 const CharList = (props) => {
 
@@ -16,14 +31,13 @@ const CharList = (props) => {
         [offset, setOffset] = useState(210),
         [outOfList, setOutOfList] = useState(false)
 
-    const {loading, error, getAllCharacters}= useMarvelService();
+    const {process, setProcess, getAllCharacters}= useMarvelService();
     const {refsArr, focusOnItem} = useItemList()
 
     useEffect(()=> {
         const limit = getItemsCount() || 9
         onRequest(offset, limit ,true)
-        return () => {
-        }
+        // eslint-disable-next-line 
     },[])
 
     const onRequest = (offset, limit, initial) => {
@@ -39,6 +53,7 @@ const CharList = (props) => {
         setOutOfList(res.length<8?true:false)
         setOffset(prev => prev + 8)
         setItemsCount(res)
+        setProcess('confirmed')
     }
 
     const setItemsCount = (res) => {
@@ -82,17 +97,15 @@ const CharList = (props) => {
         )
     }
 
-
-    const items = renderItems(charList);
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading && !newItemLoading ? <Spinner/> : null;
+    const content = useMemo(()=>{
+        return setContent(process, () => renderItems(charList), newItemLoading)
+        // eslint-disable-next-line 
+    }, [process])
     const endOfListMessage = outOfList ? <p className='char__endMessage'>That's all characters</p> : null;
 
     return (
         <div className="char__list">
-            {errorMessage}
-            {spinner}
-            {items}
+            {content}
             <button onClick = {() => onRequest(offset)}
                     className="button button__main button__long"
                     disabled = {newItemLoading}

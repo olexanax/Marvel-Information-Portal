@@ -10,6 +10,7 @@ const LiveSearch = () => {
     const [search, setSearch] = useState('')
     const [focus, setFocus] = useState(false)
     const debounce = useDebounce(search, 500)
+    let timer = null
 
     const {error, loading, setLoading, clearError, getCharacterStartWith} = useMarvelService()
 
@@ -22,9 +23,13 @@ const LiveSearch = () => {
             }
         }
           clearError()
+          // eslint-disable-next-line 
     },[debounce]);
 
-    useEffect(()=>clearInterval(removeFocus, 65),[])
+    useEffect(()=> {
+        return timer ? clearTimeout(timer) : null
+        // eslint-disable-next-line 
+    },[])
 
     const onChange = e => {
         setLoading(true)
@@ -32,12 +37,17 @@ const LiveSearch = () => {
     }
 
     const removeFocus = () =>{
-        setFocus(false)
+        timer = setTimeout(()=>setFocus(false), 100)
     }
+    const clearRemoveFocus = () =>{
+        if(timer){
+            clearTimeout(timer)
+        }
+    } 
 
 
     const renderItems = data => {
-        const list =  data.map((char, i) => <li key ={i}>
+        const list =  data.map((char, i) => <li onFocus={clearRemoveFocus} onBlur={removeFocus} key ={i}>
                                                 <Link to={`item/characters/${char.id}`} className='livesearch__char__container'>
                                                     <img src={char.thumbnail} alt="" />
                                                     <span>{char.name}</span>
@@ -51,7 +61,7 @@ const LiveSearch = () => {
     }
     
     const serverErrorMessage = error ? <p className='error'>something went wrong try again later</p> : null;
-    const notFindErrorMessage = search && !data.length && !loading && focus ?  <p className='error'>Can't find anything by your search</p> : null;
+    const notFoundErrorMessage = search && !data.length && !loading && focus ?  <p className='error'>Can't find anything by your search</p> : null;
     const content = !error && focus ? renderItems(data) : null;
     const loadingMessage = loading ? <p>loading...</p> : null;
     
@@ -63,13 +73,13 @@ const LiveSearch = () => {
                     value={search} 
                     placeholder='Find a character by name:'
                     onFocus={()=> setFocus(true)} 
-                    onBlur={()=>setTimeout(() => removeFocus(), 65)} 
+                    onBlur={removeFocus} 
                     onChange={e => onChange(e)}/>
             </form>
             {loadingMessage}
             {content}
             {serverErrorMessage}
-            {notFindErrorMessage}
+            {notFoundErrorMessage}
         </div>
     )
 }

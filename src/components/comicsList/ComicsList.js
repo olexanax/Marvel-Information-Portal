@@ -8,6 +8,20 @@ import ErrorMessage from '../errorMessage/errorMeassge';
 import Spinner from '../spinner/Spinner';
 import './comicsList.scss';
 
+const setContent = (process, Component, newItemLoading) => {
+    switch (process) {
+        case 'waiting':
+            return <Spinner/>
+        case 'loading':
+            return <Spinner/>;
+        case 'confirmed':
+            return !newItemLoading ? <Component/> : <Spinner/>;
+        case 'error':
+            return <ErrorMessage/>;
+        default:
+            throw new Error('Unexpected process state')
+    }
+}
 
 const ComicsList = () => {
 
@@ -16,7 +30,7 @@ const ComicsList = () => {
         [offset, setOffset] = useState(17),
         [outOfList, setOutOfList] = useState(false);
 
-    const {getAllComics, loading, error} = useMarvelService();
+    const {getAllComics, process, setProcess} = useMarvelService();
     const {refsArr, focusOnItem} = useItemList()
 
     useEffect(()=> {
@@ -24,6 +38,7 @@ const ComicsList = () => {
         onRequest(offset, limit ,true)
         return () => {
         }
+        // eslint-disable-next-line 
     },[])
 
     const onRequest = (offset, limit, initial) => {
@@ -39,6 +54,7 @@ const ComicsList = () => {
         setOutOfList(res.length<8?true:false)
         setOffset(prev => prev + 8)
         setItemsCount(res)
+        setProcess('confirmed')
     }
 
     const setItemsCount = (res) => {
@@ -86,16 +102,11 @@ const ComicsList = () => {
         )
     }
 
-    const items = renderItems(comicsList);
-    const spinner = loading || !comicsList ? <Spinner/> : null;
-    const errorMeassge = error ? <ErrorMessage/> : null;
     const endOfListMessage = outOfList ? <p className='char__endMessage'>That's all comics</p> : null;
 
     return (
         <div className="comics__list">
-            {spinner}
-            {errorMeassge}
-            {items}
+            {setContent(process, () => renderItems(comicsList), newItemLoading)}
             <button className="button button__main button__long"
                     onClick = {() =>onRequest(offset, 8)}
                     disabled={newItemLoading}>

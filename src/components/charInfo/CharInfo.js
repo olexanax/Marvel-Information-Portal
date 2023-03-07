@@ -2,25 +2,24 @@ import {useState, useEffect } from 'react/cjs/react.development';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import useMarvelService from '../../services/MarvelService';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/errorMeassge';
-import Skeleton from '../skeleton/Skeleton';
-import SearchChar from '../searchChar/SearchChar';
+import setContent from '../../utils/setContent';
+// import SearchChar from '../searchChar/SearchChar';
 import './charInfo.scss';
 
 
 const CharInfo = (props) => {
-
     const [char, setChar] = useState(null);
 
-    const {loading, error, getCharacter, clearError}= useMarvelService();
+    const {getCharacter, process, setProcess, clearError}= useMarvelService();
 
     useEffect(() => {
         updateChar()
+        // eslint-disable-next-line 
     }, [props.charId])
 
     const onCharLoaded = (char) => {
         setChar(char)
+        setProcess('confirmed')
     }
 
     const updateChar = () => {
@@ -33,31 +32,23 @@ const CharInfo = (props) => {
         getCharacter(charId)
         .then(onCharLoaded)
     }
-
-    const skeleton = !(loading || error || char) ? <Skeleton/> : null
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error || !char) ? <CharView char={char}/> : null;
     
     return(
         <div className='char__wrapper'>
             <div className="char__info">
-                {skeleton}
-                {errorMessage}
-                {spinner}
-                {content}
+                {setContent(process, View, char)}
             </div>
-            <div className="char__information">
+            {/* <div className="char__information"> //SearchChar component (with Formik)
                 <SearchChar/>
-            </div>
+            </div> */}
         </div>
 
     )
 }
 
 
-const CharView = ({char}) => {
-    const {name, description, thumbnail, homepage, wiki, comicsList} = char
+const View = ({data}) => {
+    const {name, description, thumbnail, homepage, wiki, comicsList} = data;
     const addStyle = thumbnail.indexOf('image_not_available') === -1 ?  null : {objectFit:'contain'};
     return(
        <>
