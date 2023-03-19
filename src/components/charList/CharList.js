@@ -37,6 +37,10 @@ const CharList = (props) => {
     useEffect(()=> {
         const limit = getItemsCount() || 9
         onRequest(offset, limit ,true)
+        window.addEventListener('scroll', setScrollHeight)
+        return () => {
+           window.removeEventListener('scroll', setScrollHeight)
+        }
         // eslint-disable-next-line 
     },[])
 
@@ -44,6 +48,9 @@ const CharList = (props) => {
         initial ? setNewItemLoading(false)  : setNewItemLoading(true);
         getAllCharacters(offset, limit)
             .then(onLoaded)
+            .then(()=> {
+                getScrollHeight()
+            })
 
     }
 
@@ -61,6 +68,17 @@ const CharList = (props) => {
     }
     const getItemsCount = () => {
         return localStorage.getItem('totalChars') !== 0 ? +localStorage.getItem('totalChars') : 9
+    }
+    const setScrollHeight = () => {
+        if(window.scrollY){
+            localStorage.setItem('HeroesScrollHeight', window.scrollY)
+        }
+    }
+    const getScrollHeight = async () => {
+       const height = await localStorage.getItem('HeroesScrollHeight')
+       console.log(height)
+       await window.scrollTo({ top: height, behavior: 'smooth' })
+
     }
 
 

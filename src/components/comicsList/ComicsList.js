@@ -13,9 +13,9 @@ const setContent = (process, Component, newItemLoading) => {
         case 'waiting':
             return <Spinner/>
         case 'loading':
-            return <Spinner/>;
+            return newItemLoading ? <Component/> : <Spinner/>;
         case 'confirmed':
-            return !newItemLoading ? <Component/> : <Spinner/>;
+            return <Component/>;
         case 'error':
             return <ErrorMessage/>;
         default:
@@ -27,7 +27,7 @@ const ComicsList = () => {
 
     const [comicsList, setComicsList] = useState([]),
         [newItemLoading, setNewItemLoading] = useState(false),
-        [offset, setOffset] = useState(17),
+        [offset, setOffset] = useState(117),
         [outOfList, setOutOfList] = useState(false);
 
     const {getAllComics, process, setProcess} = useMarvelService();
@@ -36,7 +36,9 @@ const ComicsList = () => {
     useEffect(()=> {
         const limit = getItemsCount() || 8
         onRequest(offset, limit ,true)
+        window.addEventListener('scroll', setScrollHeight)
         return () => {
+           window.removeEventListener('scroll', setScrollHeight)
         }
         // eslint-disable-next-line 
     },[])
@@ -45,7 +47,10 @@ const ComicsList = () => {
         initial ? setNewItemLoading(false)  : setNewItemLoading(true);
         getAllComics(offset, limit)
             .then(onLoaded)
-
+            .then(() => {
+                getScrollHeight()
+            })
+ 
     }
 
     const onLoaded = (res) => {
@@ -62,6 +67,16 @@ const ComicsList = () => {
     }
     const getItemsCount = () => {
         return localStorage.getItem('totalComics') !== 0 ? +localStorage.getItem('totalComics') : 8
+    }
+    const setScrollHeight = () => {
+        if(window.scrollY){
+            localStorage.setItem('ComicsScrollHeight', window.scrollY)
+        }
+    }
+    const getScrollHeight = async () => {
+       const height = await localStorage.getItem('ComicsScrollHeight')
+       await window.scrollTo({ top: height, behavior: 'smooth' })
+
     }
 
 
@@ -108,7 +123,7 @@ const ComicsList = () => {
         <div className="comics__list">
             {setContent(process, () => renderItems(comicsList), newItemLoading)}
             <button className="button button__main button__long"
-                    onClick = {() =>onRequest(offset, 8)}
+                    onClick = {() =>onRequest(offset, 8, false)}
                     disabled={newItemLoading}>
                 <div className="inner">load more</div>
             </button>
