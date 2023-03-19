@@ -1,4 +1,4 @@
-import {useState, useEffect, useMemo} from 'react/cjs/react.development';
+import {useState, useEffect, useMemo} from 'react';
 import useMarvelService from '../../services/MarvelService';
 import useItemList from '../../hooks/itemList.hook';
 

@@ -1,4 +1,4 @@
-import {useState, useEffect } from 'react/cjs/react.development';
+import {useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import useMarvelService from '../../services/MarvelService';

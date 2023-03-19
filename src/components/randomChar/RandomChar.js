@@ -1,4 +1,4 @@
-import {useState, useEffect } from 'react/cjs/react.development';
+import {useState, useEffect } from 'react';
 import useMarvelService from '../../services/MarvelService';
 import setContent from '../../utils/setContent';
 import './randomChar.scss';
