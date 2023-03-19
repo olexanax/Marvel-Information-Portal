@@ -76,7 +76,6 @@ const CharList = (props) => {
     }
     const getScrollHeight = async () => {
        const height = await localStorage.getItem('HeroesScrollHeight')
-       console.log(height)
        await window.scrollTo({ top: height, behavior: 'smooth' })
 
     }
